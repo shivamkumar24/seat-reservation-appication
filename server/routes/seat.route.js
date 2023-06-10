@@ -2,51 +2,84 @@ const express = require("express");
 const seatRouter = express.Router();
 const { SeatModel } = require("../models/seat.model");
 
-// Get seat availability status for the entire coach
-seatRouter.get("/seats", async (req, res) => {
+// Book seats
+const totalSeats = 80;
+const seatsInRow = 7;
+const lastRowSeats = 3;
+
+const seats = new Array(totalSeats).fill(false);
+
+const bookSeats = (seatCount) => {
+  const result = [];
+  for (let i = 0; i <= totalSeats - seatCount; i++) {
+    let seatsPerRow = i < totalSeats - lastRowSeats ? seatsInRow : lastRowSeats;
+    if (
+      (i % seatsPerRow) + seatCount <= seatsPerRow &&
+      seats.slice(i, i + seatCount).every((x) => x === false)
+    ) {
+      const newSeats = [...seats];
+      for (let j = 0; j < seatCount; j++) {
+        const seatIndex = i + j;
+        newSeats[seatIndex] = true;
+        const seatNumber = generateSeatNumber(seatIndex);
+        result.push({ seatNumber: seatNumber, isAvailable: false });
+      }
+      seats.splice(0, totalSeats, ...newSeats);
+      break;
+    }
+  }
+
+  return result;
+};
+
+const generateSeatNumber = (seatIndex) => {
+  let rowLetter = String.fromCharCode(
+    "a".charCodeAt(0) + Math.floor(seatIndex / seatsInRow)
+  );
+  let seatNumber = (seatIndex % seatsInRow) + 1;
+  if (seatIndex >= totalSeats - lastRowSeats) {
+    rowLetter = "z";
+    seatNumber = seatIndex - (totalSeats - lastRowSeats) + 1;
+  }
+  return rowLetter + seatNumber;
+};
+
+// Fetching the booked seats
+seatRouter.get("/bookedseats", async (req, res) => {
   try {
-    const seats = await SeatModel.find();
-    res.status(200).send({ seats });
+    const bookedSeats = await SeatModel.find();
+    res.status(200).send({ bookedSeats });
   } catch (error) {
     res.status(400).send({ msg: error.message });
   }
 });
 
-// Reserve seats based on the given number of seats requested
-seatRouter.post("/reserve", async (req, res) => {
-  const { noOfSeats } = req.body;
+// Book seats
+seatRouter.post("/booked", async (req, res) => {
+  const seatCount = parseInt(req.body.noOfSeats);
+  const newBookedSeats = bookSeats(seatCount);
 
-  try {
-    // Find available seats based on the given criteria
-    const availableSeats = await findAvailableSeats(noOfSeats);
+  if (newBookedSeats.length > 0) {
+    const seatDocuments = newBookedSeats.map((seat) => {
+      return {
+        seatNumber: seat.seatNumber,
+        isAvailable: seat.isAvailable,
+      };
+    });
 
-    if (availableSeats.length === noOfSeats) {
-      // Update the availability status of the reserved seats
-      await SeatModel.updateMany(
-        { _id: { $in: availableSeats.map((seat) => seat._id) } },
-        { isAvailable: false }
-      );
+    console.log(seatDocuments);
 
-      res.status(200).send({
-        msg: "Seats reserved successfully",
-        seats: availableSeats,
-      });
-    } else {
+    try {
+      const newSeatBook = new SeatModel({ seatNumber: seatDocuments });
+      await newSeatBook.save();
+      res.status(200).send({ msg: "New seats booked" });
+    } catch (error) {
       res.status(400).send({ msg: error.message });
     }
-  } catch (error) {
-    res.status(400).send({ msg: error.message });
+  } else {
+    res.status(400).json({ error: "No seats available" });
   }
 });
-
-// Helper function to find available seats based on the given criteria
-async function findAvailableSeats(noOfSeats) {
-  const seats = await SeatModel.find({ isAvailable: true });
-
-  // implement the logic to book in one row or nearby seats
-
-  return seats.slice(0, noOfSeats);
-}
 
 module.exports = {
   seatRouter,

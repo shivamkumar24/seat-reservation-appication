@@ -7,8 +7,3 @@ const connection = mongoose.connect(
 module.exports = {
   connection,
 };
-
-// const url =
-//   "mongodb+srv://shivamkumar24:shivamkumar24@outfit.sqlzvza.mongodb.net/outfit?retryWrites=true&w=majority";
-
-// ("mongodb+srv://shivamkumar24:<password>@cluster0.uwarmhn.mongodb.net/cluster0?retryWrites=true&w=majority");

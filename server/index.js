@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.use("/reservation", seatRouter);
+app.use("/", seatRouter);
 
 app.listen(2700, async () => {
   try {

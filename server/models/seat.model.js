@@ -2,15 +2,12 @@ const mongoose = require("mongoose");
 
 const seatSchema = new mongoose.Schema(
   {
-    seatNumber: {
-      type: Number,
-      required: true,
-      unique: true,
-    },
-    isAvailable: {
-      type: Boolean,
-      default: true,
-    },
+    seatNumber: [
+      {
+        seatNumber: { type: String, required: true },
+        isAvailable: { type: Boolean, required: true },
+      },
+    ],
   },
   {
     versionKey: false,
