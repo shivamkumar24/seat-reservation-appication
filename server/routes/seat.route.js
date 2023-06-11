@@ -67,8 +67,6 @@ seatRouter.post("/booked", async (req, res) => {
       };
     });
 
-    console.log(seatDocuments);
-
     try {
       const newSeatBook = new SeatModel({ seatNumber: seatDocuments });
       await newSeatBook.save();
