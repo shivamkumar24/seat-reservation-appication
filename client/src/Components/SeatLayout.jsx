@@ -54,7 +54,7 @@ function SeatBooking() {
     }
 
     axios
-      .post("http://fair-blue-penguin-gear.cyclic.app/booked", {
+      .post("https://fair-blue-penguin-gear.cyclic.app/booked", {
         headers: {
           "Content-Type": "application/json",
         },
