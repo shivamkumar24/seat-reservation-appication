@@ -17,7 +17,7 @@ function SeatBooking() {
 
   const fetchBookedSeats = () => {
     axios
-      .get("http://localhost:2700/bookedseats")
+      .get("https://fair-blue-penguin-gear.cyclic.app/bookedseats")
       .then((data) => {
         console.log(data.data.bookedSeats);
         let bookedSeatsLengh = data.data.bookedSeats.length;
@@ -51,30 +51,30 @@ function SeatBooking() {
       setTimeout(() => {
         setAlert("");
       }, 3000);
-    } else {
-      axios
-        .post("http://localhost:2700/booked", {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          noOfSeats: parseInt(seatCount),
-        })
-        .then((data) => {
-          console.log(data);
-          setAlert("Seat Book SuccessFully");
-          setTimeout(() => {
-            setAlert("");
-          }, 3000);
-          fetchBookedSeats();
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-          setAlert("Something went wrong. Please try again later.");
-          setTimeout(() => {
-            setAlert("");
-          }, 3000);
-        });
     }
+
+    axios
+      .post("http://fair-blue-penguin-gear.cyclic.app/booked", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        noOfSeats: parseInt(seatCount),
+      })
+      .then((data) => {
+        console.log(data);
+        setAlert("Seat Book SuccessFully");
+        setTimeout(() => {
+          setAlert("");
+        }, 3000);
+        fetchBookedSeats();
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        setAlert("Something went wrong. Please try again later.");
+        setTimeout(() => {
+          setAlert("");
+        }, 3000);
+      });
   };
 
   const generateSeatNumber = (seatIndex) => {
@@ -161,24 +161,25 @@ function SeatBooking() {
       <br />
       <br />
       <hr />
-      {bookedSeats.length > 0 && (
-        <div
-          style={{ marginTop: "10px", display: "flex", alignItems: "center" }}
-        >
-          <strong>Booked Seat no.</strong>
-          <p
-            style={{
-              padding: "3px 10px",
-              backgroundColor: "black",
-              color: "white",
-              borderRadius: "20px",
-            }}
-          >
-            {" "}
-            {bookedSeats.join(", ")}
-          </p>
-        </div>
-      )}
+
+      <div style={{ marginTop: "10px", display: "flex", alignItems: "center" }}>
+        <strong>Booked Seat no.</strong>
+        {bookedSeats.length > 0 &&
+          bookedSeats.map((el) => (
+            <p
+              style={{
+                padding: "3px 10px",
+                margin: "3px",
+                backgroundColor: "black",
+                color: "white",
+                borderRadius: "20px",
+              }}
+            >
+              {el.seatNumber}
+            </p>
+          ))}
+      </div>
+
       <br />
       <hr />
       <div
