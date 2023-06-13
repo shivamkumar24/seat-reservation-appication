@@ -15,6 +15,7 @@ function SeatBooking() {
     fetchBookedSeats();
   }, []);
 
+  // GET
   const fetchBookedSeats = () => {
     axios
       .get("https://fair-blue-penguin-gear.cyclic.app/bookedseats")
@@ -36,9 +37,35 @@ function SeatBooking() {
       })
       .catch((error) => {
         console.error("Error:", error);
+        setAlert("Something went wrong. Please try again later.");
+        setTimeout(() => {
+          setAlert("");
+        }, 3000);
       });
   };
 
+  // DELETE (RESET)
+  const handleReset = () => {
+    axios
+      .delete("https://fair-blue-penguin-gear.cyclic.app/deleteall")
+      .then((res) => {
+        console.log(res.data);
+        setAlert(`${res.data.msg}`);
+        setTimeout(() => {
+          setAlert("");
+        }, 3000);
+        fetchBookedSeats();
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        setAlert("Something went wrong. Please try again later.");
+        setTimeout(() => {
+          setAlert("");
+        }, 3000);
+      });
+  };
+
+  // POST
   const handleSeatBooking = () => {
     if (seatCount === "" || parseInt(seatCount) <= 0) {
       setAlert("Please enter a valid number of seats");
@@ -149,6 +176,20 @@ function SeatBooking() {
         Book
       </button>
       <br />
+      <button
+        onClick={handleReset}
+        style={{
+          color: "white",
+          cursor: "pointer",
+          padding: "9px 25px",
+          fontWeight: "bold",
+          border: "none",
+          borderRadius: "10px",
+          backgroundColor: "#f44336",
+        }}
+      >
+        RESET
+      </button>
       <br />
       <h3
         style={{

@@ -54,6 +54,16 @@ seatRouter.get("/bookedseats", async (req, res) => {
   }
 });
 
+// Delete all booked seats (RESET)
+seatRouter.delete("/deleteall", async (req, res) => {
+  try {
+    await SeatModel.deleteMany({});
+    res.status(200).send({ msg: "All Booked Seats Record Deleted" });
+  } catch (error) {
+    res.status(400).send({ msg: error.message });
+  }
+});
+
 // Book seats
 seatRouter.post("/booked", async (req, res) => {
   const seatCount = parseInt(req.body.noOfSeats);
