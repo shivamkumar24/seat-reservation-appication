@@ -17,7 +17,7 @@ Using HTTPS
 <h2>Purpose of our website</h2>
 <p>This assignment is given by unstop company.</p>
 
-## Glimpses of Myntra clone 🙈 :
+## Glimpses of Seat Reservation Application 🙈 :
 
 <img src="https://i.ibb.co/z6Jj5b9/Seat.png"  alt="WomenProduct" />
 
